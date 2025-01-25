@@ -1,0 +1,89 @@
+/*
+ * Copyright (c) 2025 Ville de Montreal. All rights reserved.
+ * Licensed under the MIT license.
+ * See LICENSE file in the project root for full license information.
+ */
+
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { CUSTOM_ELEMENTS_SCHEMA, DebugElement } from '@angular/core';
+import { By } from '@angular/platform-browser';
+import { TestSummaryHostComponent, TestCompactSummaryHostComponent } from './tests/summary.component.hostcomponent.spec';
+import { BaoSummaryComponent, BaoSummaryDescription } from './summary.component';
+
+fdescribe('BaoSummaryComponent', () => {
+  describe('Summary Component Basic Rendering', () => {
+    let fixture: ComponentFixture<TestSummaryHostComponent>;
+    let summaryDebugElement: DebugElement;
+
+    beforeEach(waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [BaoSummaryComponent, BaoSummaryDescription, TestSummaryHostComponent],
+        schemas: [CUSTOM_ELEMENTS_SCHEMA] 
+      }).compileComponents();
+    }));
+
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TestSummaryHostComponent);
+      fixture.detectChanges();
+      summaryDebugElement = fixture.debugElement.query(By.css('bao-summary'));
+    });
+
+    it('should render projected content correctly', () => {
+      // Ensure that all projected content elements are present in the DOM
+      expect(summaryDebugElement.query(By.css('bao-label'))).toBeTruthy();
+      expect(summaryDebugElement.query(By.css('bao-guiding-text'))).toBeTruthy();
+      expect(summaryDebugElement.query(By.css('bao-summary-description'))).toBeTruthy();
+      expect(summaryDebugElement.query(By.css('button[bao-button]'))).toBeTruthy();
+      expect(summaryDebugElement.query(By.css('bao-error'))).toBeTruthy();
+    });
+
+    it('should set default display mode to "responsive"', () => {
+      // Ensure that the default display mode is set to "responsive"
+      const summaryComponent = fixture.debugElement.query(By.directive(BaoSummaryComponent));
+      expect(summaryComponent).toBeTruthy(); // Ensure the component exists
+      if (summaryComponent) {
+        expect(summaryComponent.componentInstance.displayMode).toBe('responsive');
+      }
+    });
+  });
+
+  describe('Summary Component Compact Mode', () => {
+    let fixture: ComponentFixture<TestCompactSummaryHostComponent>;
+    let summaryDebugElement: DebugElement;
+
+    beforeEach(waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [BaoSummaryComponent, BaoSummaryDescription, TestCompactSummaryHostComponent],
+        schemas: [CUSTOM_ELEMENTS_SCHEMA] 
+      }).compileComponents();
+    }));
+
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TestCompactSummaryHostComponent);
+      fixture.detectChanges();
+      summaryDebugElement = fixture.debugElement.query(By.css('bao-summary'));
+    });
+
+    it('should apply "bao-displaymode-compact" class when displayMode is set to "compact"', () => {
+      const summaryElement = summaryDebugElement.nativeElement;
+      expect(summaryElement).toBeTruthy(); // Ensure the element exists
+      expect(summaryElement.classList.contains('bao-displaymode-compact')).toBe(true);
+    });
+
+    it('should set ARIA attributes correctly', () => {
+        const summaryElement = summaryDebugElement.nativeElement;
+        const label = summaryElement.querySelector('bao-label');
+        const guidingText = summaryElement.querySelector('bao-guiding-text');
+        const error = summaryElement.querySelector('bao-error');
+        const summaryContent = summaryElement.querySelector('.bao-summary-content');
+
+        // Verify ARIA attributes are properly applied
+        expect(label?.getAttribute('id')).toBe('testSummary-arialabelledby');
+        expect(summaryContent?.getAttribute('aria-labelledby')).toBe('testSummary-arialabelledby'); //
+        expect(guidingText?.getAttribute('id')).toBe('testSummary-ariadescribedby-guiding-text');
+        expect(summaryContent?.getAttribute('aria-describedby')).toContain('testSummary-ariadescribedby-guiding-text'); //
+        expect(error?.getAttribute('id')).toBe('testSummary-ariadescribedby-error');
+        expect(summaryContent?.getAttribute('aria-describedby')).toContain('testSummary-ariadescribedby-error'); //
+      });
+    });
+});

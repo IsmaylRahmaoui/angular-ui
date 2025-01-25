@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Ville de Montreal. All rights reserved.
+ * Copyright (c) 2025 Ville de Montreal. All rights reserved.
  * Licensed under the MIT license.
  * See LICENSE file in the project root for full license information.
  */
@@ -64,20 +64,19 @@ export class BaoSummaryComponent implements OnInit, AfterViewInit {
 
   private attribues: string;
 
-  constructor(private elementRef: ElementRef<HTMLElement>) {
-    if (!this.id) {
-      this.id = this._uniqueId;
-    }
-  }
+  constructor(private elementRef: ElementRef<HTMLElement>) {}
 
   get nativeElement(): HTMLElement {
     return this.elementRef.nativeElement;
   }
 
   public ngOnInit() {
+    if (!this.id) {
+      this.id = this._uniqueId;
+    }
+    this.nativeElement.setAttribute('id', this.id);
     this.ariaDescribedbyError = `${this.id}-ariadescribedby-error`;
     this.ariaDescribedbyGuidingText = `${this.id}-ariadescribedby-guiding-text`;
-
     this.ariaLabelledby = `${this.id}-arialabelledby`;
   }
 
